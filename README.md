@@ -1,9 +1,40 @@
+# Survival Prediction using Cellular Graphs from H&E and IHC images (CO-PILOT, AMIGO)
+
+## Introduction
+
+Processing giga-pixel whole slide histopathology images (WSI) is a computationally expensive task. Multiple instance learning (MIL) has become the conventional approach to process WSIs, in which these images are split into smaller patches for further processing. However, MILbased techniques ignore explicit information about the individual cells within a patch. In these papers, by defining the novel concepts such share-context processing and dynamic point-cloud processing basis, we adopt the cellular graph within the tissue to provide a single representation for a patient while taking advantage of the hierarchical structure of the tissue, enabling a dynamic focus between cell-level and tissue-level information. This repository is a Pytorch implementation of these models. 
+
+[[CO-PILOT paper (ICCV 2023)](https://openaccess.thecvf.com/content/ICCV2023/papers/Nakhli_CO-PILOT_Dynamic_Top-Down_Point_Cloud_with_Conditional_Neighborhood_Aggregation_for_ICCV_2023_paper.pdf)]  [[CO-PILOT presentation](https://youtu.be/2A47ZaCNOBs?si=PyKEcDgURc18JXFP)] 
+[[AMIGO paper (CVPR 2023)](https://openaccess.thecvf.com/content/CVPR2023/papers/Nakhli_Sparse_Multi-Modal_Graph_Transformer_With_Shared-Context_Processing_for_Representation_Learning_CVPR_2023_paper.pdf)] [[AMIGO presentation](https://youtu.be/i5nKpSLnV6o?si=Zn16_yy5z5fMcbuK)]
+
+
+## Requirements
+
+For this project, you need to install `Pytorch`, [`DGL`](https://www.dgl.ai/), and [`histocartography`](https://github.com/BiomedSciAI/histocartography) library. For this purpose, refer to the original websites. For the rest of the dependencies, you can refer to the `requirements.txt`.
+
+```pip install -r requirements.txt```
+
+
+## Data Preparation
+
+First, you have to use hovernet to genereate the segmentation mask for the images. For this purpose, refer to the [original repo](https://github.com/vqdang/hover_net).
+
+With the instance masks generated using the hovernet, you can use the `graph_generation.py` file to genereate the cellular graphs from the pairs of images and masks. Below is the sample command that can be used for H&E images. Please ensure that you set the flags based on your case and needs.
+
+```
+python graph_generation.py --image_path /direction/of/image/files --instance_mask_path /direction/of/hovernet/mat/files --save_path /directory/of/the/output --instance_mask_extension .mat --num_cell_types 0 --graph_max_distance 60 --handcraft_features false --deep_feature_arch resnet34 --add_location false --cell_min_area 10 --graph_k 10
+```
+
+Additionally, you need to provide three csv files. The outcome.csv which include the outcome information of the patients (including study_id, status, time, and subtype as columns), core_id.csv which includes core_id and study_id columns, and invalid_study_ids.csv which include the study_id column.  Note that study_id is an integer which is a unique identifier for each patient (internally defined by yourself); however, core_id is a non-restricted string that can be used to link the name of the file (image file name) to a unique study id. After creating all three csv files, place them inside the directory that includes the generated graph files.
+
+
 ## Run
+
+You can run the code using the `multi_modal_train.py` file. You might need to set different flags for your own usecase. An example can be found below:
 
 ```
 python3 multi_modal_train.py --data_dir path_to_data 
 ```
-
 
 Below are the available configs.
 
@@ -87,4 +118,26 @@ Below are the available configs.
 --multi_block: (default=0, type=int) - Shared block length.
 --gradient_accumulation: (default=1, type=int) - Gradient accumulation.
 --single_layer_preconv: (default=False, type=bool) - Single layer preconv.
+```
+
+## Citation
+
+If you use this repository, please make sure that you also cite the below papers as well:
+
+```
+@inproceedings{nakhli2023sparse,
+  title={Sparse Multi-Modal Graph Transformer With Shared-Context Processing for Representation Learning of Giga-Pixel Images},
+  author={Nakhli, Ramin and Moghadam, Puria Azadi and Mi, Haoyang and Farahani, Hossein and Baras, Alexander and Gilks, Blake and Bashashati, Ali},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={11547--11557},
+  year={2023}
+}
+
+@inproceedings{nakhli2023co,
+  title={CO-PILOT: Dynamic Top-Down Point Cloud with Conditional Neighborhood Aggregation for Multi-Gigapixel Histopathology Image Representation},
+  author={Nakhli, Ramin and Zhang, Allen and Mirabadi, Ali and Rich, Katherine and Asadi, Maryam and Gilks, Blake and Farahani, Hossein and Bashashati, Ali},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+  pages={21063--21073},
+  year={2023}
+}
 ```
