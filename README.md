@@ -120,6 +120,10 @@ Below are the available configs.
 --single_layer_preconv: (default=False, type=bool) - Single layer preconv.
 ```
 
+## License
+
+This repository is protected by https://creativecommons.org/licenses/by-nc/4.0/deed.en
+
 ## Citation
 
 If you use this repository, please make sure that you also cite the below papers as well:
