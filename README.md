@@ -126,7 +126,7 @@ This repository is protected by https://creativecommons.org/licenses/by-nc/4.0/d
 
 ## Citation
 
-If you use this repository, please make sure that you also cite the below papers as well:
+If you use this repository, please make sure that you also cite the below papers:
 
 ```
 @inproceedings{nakhli2023sparse,
